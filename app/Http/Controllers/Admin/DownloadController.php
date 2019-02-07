@@ -31,8 +31,7 @@ class DownloadController extends Controller
     	$gagal = '';
 
     	foreach ($mesins as $mesin) {
-	    	$connect = fsockopen($mesin->ip, "80", $errno, $errstr, 1);
-
+	    	$connect = @fsockopen($mesin->ip, "80", $errno, $errstr, 1);
 			if($connect) {
 				$soap_request = "<GetAttLog>
 								<ArgComKey xsi:type=\"xsd:integer\">" . $mesin->nomor . "</ArgComKey>
@@ -52,6 +51,8 @@ class DownloadController extends Controller
 			} else {
 				$gagal .= "Gagal Koneksi ".$mesin->ip.":".$mesin->nomor."<br>";
 			}
+
+			if ($connect) {
 			$buffer = $this->Parse_Data($buffer, "<GetAttLogResponse>", "</GetAttLogResponse>");
 			$buffer = explode("\r\n", $buffer);
 			for($a = 1; $a < count($buffer)-1; $a++):
@@ -74,19 +75,19 @@ class DownloadController extends Controller
 					if ($time >= $waktu->masuk_1 && $time < $waktu->keluar_1) {
 						$find['masuk_1'] = ($time > $dd->masuk_1 && !empty($dd->masuk_1))? $dd->masuk_1 : $time;
 						$find->update();
-						if($find) { $berhasil .= "Berhasil Update Catat"; }else{ $gagal .= "Gagal Catat"; }
+						if($find) { $berhasil .= "Berhasil Update Catat <br>"; }else{ $gagal .= "Gagal Catat <br>"; }
 					}elseif ($time >= $waktu->keluar_1 && $time < $waktu->masuk_2) {
 						$find['keluar_1'] = ($time > $dd->keluar_1 && !empty($dd->keluar_1))? $dd->keluar_1 : $time;
 						$find->update();
-						if($find) { $berhasil .= "Berhasil Update Catat"; }else{ $gagal .= "Gagal Catat"; }
+						if($find) { $berhasil .= "Berhasil Update Catat <br>"; }else{ $gagal .= "Gagal Catat <br>"; }
 					}elseif ($time >= $waktu->masuk_2 && $time < $waktu->keluar_2) {
 						$find['masuk_2'] = ($time > $dd->masuk_2 && !empty($dd->masuk_2))? $dd->masuk_2 : $time;
 						$find->update();
-						if($find) { $berhasil .= "Berhasil Update Catat"; }else{ $gagal .= "Gagal Catat"; }
+						if($find) { $berhasil .= "Berhasil Update Catat <br>"; }else{ $gagal .= "Gagal Catat <br>"; }
 					}elseif ($time >= $waktu->keluar_2 && $time < $waktu->batas_pencatatan) {
 						$find['keluar_2'] = ($time > $dd->keluar_2 && !empty($dd->keluar_2))? $dd->keluar_2 : $time;
 						$find->update();
-						if($find) { $berhasil .= "Berhasil Update Catat"; }else{ $gagal .= "Gagal Catat"; }
+						if($find) { $berhasil .= "Berhasil Update Catat <br>"; }else{ $gagal .= "Gagal Catat <br>"; }
 					}
 				}else{
 					$rekam = new Rekam;
@@ -96,27 +97,28 @@ class DownloadController extends Controller
 					if ($time >= $waktu->masuk_1 && $time < $waktu->keluar_1) {
 							$rekam['masuk_1'] = $time;
 							$rekam->save();
-							if($rekam) { $berhasil .= "Berhasil Catat"; }else{ $gagal .= "Gagal Catat"; }
+							if($rekam) { $berhasil .= "Berhasil Catat <br>"; }else{ $gagal .= "Gagal Catat <br>"; }
 					}elseif ($time >= $waktu->keluar_1 && $time < $waktu->masuk_2) {
 							$rekam['keluar_1'] = $time;
 							$rekam->save();
-							if($rekam) { $berhasil .= "Berhasil Catat"; }else{ $gagal .= "Gagal Catat"; }
+							if($rekam) { $berhasil .= "Berhasil Catat <br>"; }else{ $gagal .= "Gagal Catat <br>"; }
 					}elseif ($time >= $waktu->masuk_2 && $time < $waktu->keluar_2) {
 							$rekam['masuk_2'] = $time;
 							$rekam->save();
-							if($rekam) { $berhasil .= "Berhasil Catat"; }else{ $gagal .= "Gagal Catat"; }
+							if($rekam) { $berhasil .= "Berhasil Catat <br>"; }else{ $gagal .= "Gagal Catat <br>"; }
 					}elseif ($time >= $waktu->keluar_2 && $time < $waktu->batas_pencatatan) {
 							$rekam['keluar_2'] = $time;
 							$rekam->save();
-							if($rekam) { $berhasil .= "Berhasil Catat"; }else{ $gagal .= "Gagal Catat"; }
+							if($rekam) { $berhasil .= "Berhasil Catat <br>"; }else{ $gagal .= "Gagal Catat <br>"; }
 					}
 				}
 
 			endfor;
+			}
     	}
     	$hasil = [
-    		$berhasil = $berhasil,
-    		$gagal = $gagal
+    		$berhasil = (empty($berhasil)) ? '' : '<b>Download</b> '. $berhasil,
+    		$gagal = (empty($gagal)) ? '' :'<b>Download</b> '. $gagal
     	];
     	return $hasil;
     }
@@ -127,7 +129,7 @@ class DownloadController extends Controller
     	$gagal = '';
 
     	foreach ($mesins as $mesin) {
-	    	$connect = fsockopen($mesin->ip, "80", $errno, $errstr, 1);
+	    	$connect = @fsockopen($mesin->ip, "80", $errno, $errstr, 1);
 			if($connect) {
 				$soap_request = "<ClearData><ArgComKey xsi:type=\"xsd:integer\">" . $mesin->nomor . "</ArgComKey><Arg><Value xsi:type=\"xsd:integer\">3</Value></Arg></ClearData>";
 				$newLine = "\r\n";
@@ -140,14 +142,17 @@ class DownloadController extends Controller
 					$buffer = $buffer . $Response;
 				}
 			} else {
-				$gagal .= 'Gagal Koneksi';
+				$gagal .= 'Gagal Koneksi '.$mesin->ip.' <br>';
 			}
-			$buffer = $this->Parse_Data($buffer, "<Information>", "</Information>");
-			$berhasil .= 'Berhasil';
+			if ($connect) {
+				$buffer = $this->Parse_Data($buffer, "<Information>", "</Information>");
+				$berhasil .= 'Berhasil <br>';
+			}
+			
 		}
 		$hasil = [
-    		$berhasil = $berhasil,
-    		$gagal = $gagal
+    		$berhasil = (empty($berhasil)) ? '' : '<b>Clear</b> '. $berhasil,
+    		$gagal = (empty($gagal)) ? '' : '<b>Clear</b> '. $gagal
     	];
     	return $hasil;
     }
@@ -161,5 +166,21 @@ class DownloadController extends Controller
     	$hasil = $this->download();
     	$clear = $this->clear();
     	return back()->with('success', $hasil[0])->with('gagal', $hasil[1])->with('success', $clear[0])->with('gagal', $clear[1]);
+    }
+    public function downloadupload()
+    {
+    	$hasil = $this->download();
+    	return redirect('admin/upload/download')->with('success', $hasil[0])->with('gagal', $hasil[1]);
+
+    }
+    public function downloadclearupload()
+    {
+    	$hasil = $this->download();
+    	$clear = $this->clear();
+    	$data = [
+    		'success' =>  $hasil[0]. $clear[0],
+    		'gagal' =>  $hasil[1]. $clear[1]
+    	];
+    	return redirect('admin/upload/download')->with($data);
     }
 }

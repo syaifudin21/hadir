@@ -20,7 +20,7 @@
   <body>
 
     <nav class="navbar navbar-dark navbar-expand-md sticky-top bg-dark flex-md-nowrap p-0">
-      <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">{{ config('app.name', 'Laravel') }}</a>
+      <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="{{url('/')}}">{{ config('app.name', 'Laravel') }}</a>
 
 
       <button class="navbar-toggler toglleplus" type="button" data-toggle="offcanvas" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,15 +50,6 @@
           <div class="sidebar-sticky">
             
             <ul class="nav flex-column">
-              <li class="nav-item">
-                <div class="media nav-link">
-                  {{-- <img class="mr-3" src="{{asset('images/guru/profil/foto.jpg')}}" alt="Generic placeholder image" width="64px"> --}}
-                  <div class="media-body">
-                    <a href="{{url('pengurus/profil')}}"><h5 style="margin-bottom: 2px;">{{auth::user()->username}}</h5></a>
-                    <p><small>ss</small></p>
-                  </div>
-                </div>
-              </li>
               <li class="nav-item">
                 <a class="nav-link" href="{{url('admin')}}">
                   <span data-feather="home"></span>
@@ -99,6 +90,12 @@
                 <a class="nav-link" href="{{url('admin/gagalabsen')}}">
                   <span data-feather="home"></span>
                   Gagal Absen <span class="sr-only">(current)</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{{url('admin/tahunajaran')}}">
+                  <span data-feather="home"></span>
+                  Tahun Ajaran <span class="sr-only">(current)</span>
                 </a>
               </li>
             </ul>

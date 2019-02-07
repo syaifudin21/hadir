@@ -36,10 +36,16 @@
 </nav>
 
 
-@if(Session::has('success'))
-    <div class="alert alert-info alert-dismissable">
+@if(session('success')) 
+        <div class="alert alert-info alert-dismissable">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            {!! session('success') !!}
+        </div>
+@endif
+@if (session('gagal'))
+    <div class="alert alert-danger alert-dismissable">
         <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-        {{ Session::get('success') }}
+        {!!session('gagal')!!}
     </div>
 @endif
 
@@ -52,7 +58,7 @@
             <tr>
                 <th>#</th>
                 <th>IP</th>
-                <th>Nomor Mesin</th>
+                <th>Key Mesin (Key)</th>
                 <th>Status</th>
                 <th>Action</th>
             </tr>
@@ -99,7 +105,7 @@
             </div>
         </div>
         <div class="form-group row">
-            <label for="nomor" class="col-sm-4 col-form-label text-md-right">Nomor Mesin</label>
+            <label for="nomor" class="col-sm-4 col-form-label text-md-right">Nomor Mesin  (Key)</label>
             <div class="col-md-6">
                 <input id="nomor" type="text" class="form-control{{ $errors->has('nomor') ? ' is-invalid' : '' }}" name="nomor" value="{{ old('nomor') }}" required autofocus>
                 @if ($errors->has('nomor'))
@@ -153,7 +159,7 @@
                 </div>
             </div>
              <div class="form-group row">
-                <label for="nomor" class="col-md-4 col-form-label text-md-right">{{ __('Nomor Mesin') }}</label>
+                <label for="nomor" class="col-md-4 col-form-label text-md-right">{{ __('Nomor Mesin (Key)') }}</label>
                 <div class="col-md-8">
                     <input id="nomor" type="text" class="form-control{{ $errors->has('nomor') ? ' is-invalid' : '' }}" name="nomor" value="{{ old('nomor') }}" required autofocus>
                     @if ($errors->has('nomor'))

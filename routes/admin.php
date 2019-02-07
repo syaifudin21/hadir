@@ -8,8 +8,11 @@ Route::post('/logout', 'Admin\LoginController@logout')->name('admin.logout');
 Route::get('/sinctime', 'Admin\AdminController@sinctime');
 Route::get('/download/manual', 'Admin\DownloadController@downloadmanual');
 Route::get('/download/clear', 'Admin\DownloadController@downloadclear');
+Route::get('/download/upload', 'Admin\DownloadController@downloadupload');
+Route::get('/download/clear/upload', 'Admin\DownloadController@downloadclearupload');
 
 Route::get('/upload/server', 'Admin\UploadController@upload');
+Route::get('/upload/download', 'Admin\UploadController@downloadupload');
 
 Route::get('/user', 'Admin\UserController@index');
 Route::post('/user', 'Admin\UserController@store')->name('user.tambah');
@@ -21,12 +24,18 @@ Route::post('/mesin', 'Admin\MesinController@store')->name('mesin.tambah');
 Route::put('/mesin/update', 'Admin\MesinController@update')->name('mesin.update');
 Route::delete('/mesin/{id}', 'Admin\MesinController@delete')->name('mesin.hapus');
 
+Route::get('/tahunajaran', 'Admin\TaController@index');
+Route::post('/tahunajaran', 'Admin\TaController@store')->name('tahunajaran.tambah');
+Route::put('/tahunajaran/update', 'Admin\TaController@update')->name('tahunajaran.update');
+Route::delete('/tahunajaran/{id}', 'Admin\TaController@delete')->name('tahunajaran.hapus');
+
 Route::get('/waktu', 'Admin\WaktuController@index');
 Route::post('/waktu', 'Admin\WaktuController@store')->name('waktu.tambah');
 Route::put('/waktu/update', 'Admin\WaktuController@update')->name('waktu.update');
 Route::delete('/waktu/{id}', 'Admin\WaktuController@delete')->name('waktu.hapus');
 
 Route::get('/rekaman', 'Admin\RekamController@index');
+Route::post('/rekaman', 'Admin\RekamController@gagalabsen')->name('rekam.gagalabsen');
 Route::get('/singkron', 'Admin\SingkronController@index');
 
 Route::get('/setsingkron', 'Admin\SetSingkronController@index');

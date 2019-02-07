@@ -5,7 +5,7 @@
 <div class="nav-scroller bg-white box-shadow">
    <ul class="nav nav-underline" id="myTab" role="tablist">
         <li class="nav-item">
-        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Mesin</a>
+        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">User</a>
         </li>
         <li class="nav-item">
         <a class="nav-link" id="profile-tab" data-toggle="tab" href="#tambah" role="tab" aria-controls="profile" aria-selected="false">Tambah</a>
@@ -29,17 +29,23 @@
 </div>
 </div>
 
-<nav aria-label="breadcrumb">
+{{-- <nav aria-label="breadcrumb">
   <ol class="breadcrumb bg-white" style="padding: 0px">
     <li class="breadcrumb-item active" aria-current="page">User</li>
   </ol>
-</nav>
+</nav> --}}
 
 
-@if(Session::has('success'))
-    <div class="alert alert-info alert-dismissable">
+@if(session('success')) 
+        <div class="alert alert-info alert-dismissable">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            {!! session('success') !!}
+        </div>
+@endif
+@if (session('gagal'))
+    <div class="alert alert-danger alert-dismissable">
         <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-        {{ Session::get('success') }}
+        {!!session('gagal')!!}
     </div>
 @endif
 

@@ -16,10 +16,16 @@
 </div>
 </div>
 
-@if(Session::has('success'))
-    <div class="alert alert-info alert-dismissable">
+@if(session('success')) 
+        <div class="alert alert-info alert-dismissable">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            {!! session('success') !!}
+        </div>
+@endif
+@if (session('gagal'))
+    <div class="alert alert-danger alert-dismissable">
         <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-        {{ Session::get('success') }}
+        {!!session('gagal')!!}
     </div>
 @endif
 

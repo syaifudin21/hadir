@@ -13,7 +13,7 @@ class SetSingkronController extends Controller
     }
     public function index()
     {
-    	$setsingkrons = AutoUpload::all();
+    	$setsingkrons = AutoUpload::orderBy('time', 'ASC')->get();
     	return view('admin.setsingkron', compact('setsingkrons'));
     }
     public function validasi(Request $request)

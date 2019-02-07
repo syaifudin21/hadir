@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Rekam;
+use App\Models\GagalAbsen;
 
 class RekamController extends Controller
 {
@@ -20,16 +21,22 @@ class RekamController extends Controller
     public function validasi(Request $request)
     {
       $this->validate($request, [
-        'kategori' => 'required|max:40',
+        'waktu_input' => 'required',
+        'id_rekam' => 'required',
       ]);
     }
-    public function store(Request $request)
+    public function gagalabsen(Request $request)
     {
         $this->validasi($request);
-        $kategori = new Kategori();
+        $rekam = Rekam::find($request->id_rekam);
+        $rekam[$request->dimensi_waktu] = $request->waktu_input;
+        $rekam['id_absen'] = null;
+        $rekam->update();
+
+        $kategori = new GagalAbsen();
         $kategori->fill($request->all());
         $kategori->save();
-        return back()->with('success', 'Berhasil Menambahkan Kategori');
+        return back()->with('success', 'Berhasil Menambahkan Waktu');
     }
 
     public function update(Request $request)

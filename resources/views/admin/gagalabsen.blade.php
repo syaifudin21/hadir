@@ -2,19 +2,6 @@
 
 @section('content')
 
-<div class="nav-scroller bg-white box-shadow">
-   <ul class="nav nav-underline" id="myTab" role="tablist">
-        <li class="nav-item">
-        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Gagal Absen</a>
-        </li>
-        <li class="nav-item">
-        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#tambah" role="tab" aria-controls="profile" aria-selected="false">Tambah</a>
-        </li>
-    </ul>
-</div>
-
-<br><br>
-
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
 <h1 class="h2">Gagal Absen</h1>
 <div class="btn-toolbar mb-2 mb-md-0">
@@ -29,10 +16,16 @@
 </div>
 </div>
 
-@if(Session::has('success'))
-    <div class="alert alert-info alert-dismissable">
+@if(session('success')) 
+        <div class="alert alert-info alert-dismissable">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            {!! session('success') !!}
+        </div>
+@endif
+@if (session('gagal'))
+    <div class="alert alert-danger alert-dismissable">
         <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-        {{ Session::get('success') }}
+        {!!session('gagal')!!}
     </div>
 @endif
 
@@ -46,6 +39,7 @@
                 <th>#</th>
                 <th>ID Finger</th>
                 <th>Dimensi Waktu</th>
+                <th>Tanggal</th>
                 <th>Waktu</th>
                 <th>Action</th>
             </tr>
@@ -53,16 +47,19 @@
         <?php $n=1;?>
         <tbody>
             @foreach($gagals as $gagal)
+            <?php
+                $user = App\Models\User::where('id_finger', $gagal->id_finger)->first();
+            ?>
             <tr>
                 <td>{{$n++}}</td>
-                <td>{{$gagal->id_finger}}</td>
+                <td>{{(!empty($user))? $user->nama: ''}}</td>
                 <td>{{$gagal->dimensi_waktu}}</td>
+                <td>{{$gagal->tanggal}}</td>
                 <td>{{$gagal->waktu_input}}</td>
                 <td>
                     <button type="button" class="btn btn-outline-primary btn-sm" data-toggle="modal" data-target="#exampleModal" 
                     data-id="{{$gagal->id}}"
-                    data-id_finger="{{$gagal->id_finger}}"
-                    data-dimensi_waktu="{{$gagal->dimensi_waktu}}"
+                    data-id_rekam="{{$gagal->id_rekam}}"
                     data-waktu_input="{{$gagal->waktu_input}}"
                     >Update</button>
                     <button class="btn btn-outline-danger btn-sm" onclick="event.preventDefault(); document.getElementById('hapus-form{{$gagal->id}}').submit();" > Hapus </button>
@@ -77,39 +74,6 @@
 </div>
     </div>
 
-    <div class="tab-pane fade" id="tambah" role="tabpanel" aria-labelledby="profile-tab">
-    <form method="POST" action="{{ route('gagalabsen.tambah') }}">
-        {{ csrf_field() }}
-        <div class="form-group row">
-            <label for="id_finger" class="col-sm-4 col-form-label text-md-right">ID Finger</label>
-            <div class="col-md-6">
-                <input id="id_finger" type="text" class="form-control{{ $errors->has('id_finger') ? ' is-invalid' : '' }}" name="id_finger" value="{{ old('id_finger') }}" required autofocus>
-                @if ($errors->has('id_finger'))
-                    <span class="invalid-feedback">
-                        <strong>{{ $errors->first('id_finger') }}</strong>
-                    </span>
-                @endif
-            </div>
-        </div>
-        <div class="form-group row">
-            <label for="dimensi_waktu" class="col-sm-4 col-form-label text-md-right">Dimensi Waktu</label>
-            <div class="col-md-6">
-                <select class="form-control{{ $errors->has('dimensi_waktu') ? ' is-invalid' : '' }}" name="dimensi_waktu" required>
-                    <option selected disabled>Pilih Dimensi</option>
-                    <option value="masuk_1">Masuk 1</option>
-                    <option value="keluar_1">Keluar 1</option>
-                    <option value="masuk_2">Masuk 2</option>
-                    <option value="keluar_2">Keluar 2</option>
-                </select>
-            </div>
-        </div>
-            <div class="form-group row">
-                <div class="col-md-8 offset-md-4">
-                    <button type="submit" class="btn btn-primary">Tambah</button>
-                </div>
-            </div>
-        </form>
-    </div>
 </div>
 
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -125,41 +89,15 @@
       <div class="modal-body">
             @csrf @method('put')
             <input type="hidden" name="id" id="id">
+            <input type="hidden" name="id_rekam" id="id_rekam">
+            
             <div class="form-group row">
-                <label for="id_finger" class="col-md-4 col-form-label text-md-right">{{ __('ID Finger') }}</label>
-                <div class="col-md-8">
-                    <input id="id_finger" type="text" class="form-control{{ $errors->has('id_finger') ? ' is-invalid' : '' }}" name="id_finger" value="{{ old('id_finger') }}" required autofocus>
-                    @if ($errors->has('id_finger'))
-                        <span class="invalid-feedback" role="alert">
-                            <strong>{{ $errors->first('id_finger') }}</strong>
-                        </span>
-                    @endif
-                </div>
-            </div>
-             <div class="form-group row">
                 <label for="waktu_input" class="col-md-4 col-form-label text-md-right">{{ __('Waktu Input') }}</label>
                 <div class="col-md-8">
-                    <input id="waktu_input" type="text" class="form-control{{ $errors->has('waktu_input') ? ' is-invalid' : '' }}" name="waktu_input" value="{{ old('waktu_input') }}" required autofocus>
+                    <input id="waktu_input" type="time" class="form-control{{ $errors->has('waktu_input') ? ' is-invalid' : '' }}" name="waktu_input" value="{{ old('waktu_input') }}" required autofocus>
                     @if ($errors->has('waktu_input'))
                         <span class="invalid-feedback" role="alert">
                             <strong>{{ $errors->first('waktu_input') }}</strong>
-                        </span>
-                    @endif
-                </div>
-            </div>
-             <div class="form-group row">
-                <label for="dimensi_waktu" class="col-md-4 col-form-label text-md-right">{{ __('Dimensi Waktu') }}</label>
-                <div class="col-md-8">
-                    <select id="dimensi_waktu" class="form-control{{ $errors->has('dimensi_waktu') ? ' is-invalid' : '' }}" name="dimensi_waktu" required>
-                        <option selected disabled>Pilih Dimensi</option>
-                        <option value="masuk_1">Masuk 1</option>
-                        <option value="keluar_1">Keluar 1</option>
-                        <option value="masuk_2">Masuk 2</option>
-                        <option value="keluar_2">Keluar 2</option>
-                    </select>
-                    @if ($errors->has('dimensi_waktu'))
-                        <span class="invalid-feedback" role="alert">
-                            <strong>{{ $errors->first('dimensi_waktu') }}</strong>
                         </span>
                     @endif
                 </div>
@@ -182,16 +120,14 @@
     $('#exampleModal').on('show.bs.modal', function (event) {
       var button = $(event.relatedTarget) // Button that triggered the modal
       var id = button.data('id')
-      var id_finger = button.data('id_finger')
-      var dimensi_waktu = button.data('dimensi_waktu')
       var waktu_input = button.data('waktu_input')
+      var id_rekam = button.data('id_rekam')
 
       var modal = $(this)
       modal.find('.modal-title').text('Update Mesin')
       modal.find('#id').val(id)
-      modal.find('#id_finger').val(id_finger)
-      modal.find('#dimensi_waktu').val(dimensi_waktu)
       modal.find('#waktu_input').val(waktu_input)
+      modal.find('#id_rekam').val(id_rekam)
     })
 
 </script>

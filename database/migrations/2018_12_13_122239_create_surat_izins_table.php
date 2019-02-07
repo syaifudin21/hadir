@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateGagalAbsensTable extends Migration
+class CreateSuratIzinsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,15 @@ class CreateGagalAbsensTable extends Migration
      */
     public function up()
     {
-        Schema::create('gagal_absens', function (Blueprint $table) {
+        Schema::create('surat_izins', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('id_rekam');
+            $table->integer('nisn');
             $table->integer('id_finger');
-            $table->enum('dimensi_waktu',['masuk_1','keluar_1','masuk_2','keluar_2']);
-            $table->date('tanggal');
-            $table->time('waktu_input');
+            $table->enum('izin',['Izin', 'Sakit']);
+            $table->date('mulai')->useCurrent();
+            $table->date('selesai')->nullable();
+            $table->text('alasan');
+            $table->text('bukti');
             $table->timestamps();
         });
     }
@@ -31,6 +33,6 @@ class CreateGagalAbsensTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('gagal_absens');
+        Schema::dropIfExists('surat_izins');
     }
 }
